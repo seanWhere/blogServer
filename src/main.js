@@ -9,16 +9,21 @@ const port = 3000;
 // HTTP Logger
 app.use(morgan('combined'));
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 // template engine
 app.engine('.hbs', engine({
     extname: '.hbs'
 }));
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, './resources/views'));
-//app.set('views', './resources/views');
 
 app.get('/', (req, res) => {
     res.render('home');
+})
+
+app.get('/search', (req, res) => {
+    res.render('search');
 })
 
 app.listen(port, () => {
