@@ -1,0 +1,15 @@
+<form method="post" action="/students/{{student._id}}?_method=put">
+    <div class="formdata">
+        <label for="name">Tên</label>
+        <input type="text" name="name" id="name" value="{{student.name}}">
+    </div>
+    <div class="formdata">
+        <label for="age">Tuổi</label>
+        <input type="number" name="age" id="age" value="{{student.age}}">
+    </div>
+    <div class="formdata">
+        <label for="address">Địa chỉ</label>
+        <input type="text" name="address" id="address" value="{{student.address}}">
+    </div>
+    <button type="submit" class="btn-primary">Update</button>
+</form>

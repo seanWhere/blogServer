@@ -1,17 +1,15 @@
-const Courses = require('../models/Courses');
+const Students = require('../models/Students');
+const { multipleMongooseToObject } = require('../../util/mongoose');
 
 class SiteController {
-    index(req, res) {
-        res.render('body/home');
-    }
 
-    Courses(req, res) {
-        Courses.find({}, function (err, course) {
-            if (!err) {
-                res.json(course);
-            }
-            else res.status(500).json({ error: 'message' });
-        });
+    Students(req, res, next) {
+        Students.find({})
+        //  Có thể dùng Student.find({}).lean()
+            .then(Students => res.render('body/home', {
+                Students: multipleMongooseToObject(Students)
+            }))
+            .catch(next);
     }
 
     search(req, res) {
