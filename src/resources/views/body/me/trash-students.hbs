@@ -6,7 +6,8 @@
         </div>
         <select class="form-select form-select-sm" name="action" required>
             <option value="" selected>Open this select menu</option>
-            <option value="delete">Xóa</option>
+            <option value="restore">Khôi phục</option>
+            <option value="forceDelete">Xóa vĩnh viễn</option>
         </select>
         <button class="btn btn-primary btn-sm check-all-submit-btn disabled">Oke</button>
     </div>
@@ -33,35 +34,34 @@
                 <td>{{this.age}}</td>
                 <td>{{this.address}}</td>
                 <td>
-                    <a href="/students/{{this._id}}/edit" class="btn btn-link">Sửa</a>
+                    <a href="" class="btn btn-link btn-restore" data-id="{{this._id}}">Khôi phục</a>
                     <a href="" class="btn btn-link" data-toggle="modal" data-id="{{this._id}}"
-                        data-target="#delete-student-modal">Xóa</a>
+                        data-target="#delete-student-modal">Xóa vĩnh viễn</a>
                 </td>
             </tr>
             {{else}}
             <tr>
                 <td colspan="5">
-                    Thêm sinh viên ngay
-                    <a href="/students/create">Thêm sinh viên</a>
+                    Thùng rác trống
+                    <a href="/me/stored/students">Danh sách sinh viên</a>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </form>
-
 {{!-- Confirm delete student --}}
 <div id="delete-student-modal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Xóa sinh viên?</h5>
+                <h5 class="modal-title">Xóa sinh viên</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <p>Bạn chắc chắn muốn xóa sinh viên này?</p>
+                <p>Bạn chắc chắn muốn xóa vĩnh viễn sinh viên này?</p>
             </div>
             <div class="modal-footer">
                 <button id="btn-delete-student" type="button" class="btn btn-danger">Xóa bỏ</button>
@@ -72,35 +72,44 @@
 </div>
 
 <form name="delete-student-form" method="post"></form>
+<form name="restore-student-form" method="post"></form>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var studentId;
-        var deleteForm = document.forms['delete-student-form'];
-        var containerForm = document.forms['container-name'];
         var checkboxAll = $('#checkbox-all');
         var studentCheckbox = $('input[name="ids[]"]');
+        var btnRestore = $('.btn-restore');
         var checkSubmitBtn = $('.check-all-submit-btn');
+        var deleteForm = document.forms['delete-student-form'];
+        var restoreForm = document.forms['restore-student-form'];
 
         // get id from delete button
         $('#delete-student-modal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget);
             studentId = button.data('id');
         });
-
-        // btn delete clicked
+        // btn forceDelete clicked
         var btnDeleteStudent = document.getElementById('btn-delete-student');
         btnDeleteStudent.onclick = function () {
-            deleteForm.action = '/students/' + studentId + '?_method=DELETE';
+            deleteForm.action = '/students/' + studentId + '/force' + '?_method=DELETE';
             deleteForm.submit();
-        }
+        };
+
+        // btn restore clicked
+        btnRestore.click(function (e) {
+            e.preventDefault();
+            studentId = $(this).data('id');
+            restoreForm.action = '/students/' + studentId + '?_method=PATCH';
+            restoreForm.submit();
+        });
 
         // checkboxAll changed
         checkboxAll.change(function () {
             var isCheckedAll = $(this).prop('checked');
             studentCheckbox.prop('checked', isCheckedAll);
             btnSubmitDisabled();
-        });
+        })
 
         // any checkbox changed
         studentCheckbox.change(function () {
@@ -108,7 +117,7 @@
                 studentCheckbox.length === $('input[name="ids[]"]:checked').length;
             checkboxAll.prop('checked', isCheckedAll);
             btnSubmitDisabled();
-        });
+        })
 
         // btn checkboxes submit
         checkSubmitBtn.on('submit', function (e) {
@@ -116,16 +125,18 @@
             if (isSubmittable) {
                 e.preventDefault();
             }
-        });
-
+        })
 
         function btnSubmitDisabled() {
             var checkboxCheckedLength = $('input[name="ids[]"]:checked').length;
             if (checkboxCheckedLength > 0) {
                 checkSubmitBtn.removeClass('disabled');
-            } else {
+            }
+            else {
                 checkSubmitBtn.addClass('disabled');
             }
         }
+
+
     });
 </script>

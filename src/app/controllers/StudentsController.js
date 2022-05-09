@@ -1,8 +1,16 @@
 const Students = require('../models/Students');
-const { mongooseToObject } = require('../../util/mongoose');
+const { mongooseToObject, multipleMongooseToObject } = require('../../util/mongoose');
 
 class StudentsController {
 
+    students(req, res, next) {
+        Students.find({})
+        //  Có thể dùng Student.find({}).lean()
+            .then(Students => res.render('body/home', {
+                Students: multipleMongooseToObject(Students)
+            }))
+            .catch(next);
+    }
     // [GET] /students/:slug
     show(req, res, next) {
         Students.findOne()
@@ -50,10 +58,48 @@ class StudentsController {
 
     // [DELETE] /students/:id
     delete(req, res, next) {
+        Students.delete({ _id: req.params.id })
+            .then(() => res.redirect('back'))
+            .catch(next);        
+    }
+
+    // [DELETE] /students/:id/force
+    forceDelete(req, res, next) {
         Students.deleteOne({ _id: req.params.id })
             .then(() => res.redirect('back'))
+            .catch(next);        
+    }    
+
+    // [PATCH] /students/:id
+    restore(req, res, next) {
+        Students.restore({ _id: req.params.id })
+            .then(() => res.redirect('back'))
             .catch(next);
-        
+    }
+
+    // [POST] /students/handlebar-formAction
+    handlebarFormAction(req, res, next) {
+        switch (req.body.action) {
+            case 'delete':
+                Students.delete({ _id: req.body.ids })
+                // Students.delete({ _id: { $in: req.body.ids} })
+                    .then(() => res.redirect('back'))
+                    .catch(next); 
+                break;
+            case 'restore':
+                Students.restore({ _id: req.body.ids })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            case 'forceDelete':
+                Students.deleteMany({ _id: req.body.ids })
+                    .then(() => res.redirect('back'))
+                    .catch(next);
+                break;
+            default:
+                res.send(req.body); 
+                
+        }
     }
 }
 

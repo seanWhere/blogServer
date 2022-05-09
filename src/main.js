@@ -37,6 +37,33 @@ app.set('views', path.join(__dirname, 'resources', 'views'));
 
 app.use(methodOverride('_method'));
 
+app.use(saver);
+
+function saver(req, res, next) {
+    // logins,...
+    next();
+}
+
+// app.get('/middleware',
+//     function (req, res, next) {
+//         if (['first', 'second'].includes(req.query.type)) {
+//             req.type = 'Oke';
+//             return next();
+//         }
+//         else {
+//             res.json({
+//                 message: 'You have error',
+//             })
+//         }
+//     },
+//     function (req, res, next) {
+//         res.json({
+//             message: 'You are ready',
+//             type: req.type,
+//         })
+//     }
+// );
+
 // route init
 route(app);
 
