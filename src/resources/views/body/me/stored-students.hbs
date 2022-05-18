@@ -1,3 +1,4 @@
+{{_sort.type}}
 <form name="container-name" method="POST" action="/students/handlebar-formAction">
     <div class="d-flex checkbox-size">
         <div class="mb-3 form-check">
@@ -15,8 +16,17 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">#</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Tuổi</th>
+                <th scope="col">
+                    Tên
+                    {{!-- <a href="?_sort&column=name&type=asc">
+                        <span class="fa-solid fa-sort"></span>
+                    </a> --}}
+                    {{{sortable 'name' _sort}}}
+                </th>
+                <th scope="col">
+                    Tuổi
+                    {{{sortable 'age' _sort}}}
+                </th>
                 <th scope="col" colspan="2">Địa chỉ</th>
             </tr>
         </thead>

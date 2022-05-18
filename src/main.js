@@ -9,6 +9,8 @@ const methodOverride = require('method-override');
 const db = require('./config/db');
 const port = 3000;
 
+const sortMiddleware = require('./app/middleware/SortMiddleware');
+
 // HTTP Logger
 // app.use(morgan('combined'));
 
@@ -39,10 +41,14 @@ app.use(methodOverride('_method'));
 
 app.use(saver);
 
+// custom middleware
 function saver(req, res, next) {
     // logins,...
     next();
-}
+};
+
+app.use(sortMiddleware);
+
 
 // app.get('/middleware',
 //     function (req, res, next) {
