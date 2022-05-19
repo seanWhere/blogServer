@@ -32,8 +32,6 @@ app.engine(
     }),
 );
 
-db.connect();
-
 app.set('view engine', '.hbs');
 app.set('views', path.join(__dirname, 'resources', 'views'));
 
@@ -41,6 +39,8 @@ app.use(methodOverride('_method'));
 
 app.use(saver);
 
+// database handle
+db.connect();
 // custom middleware
 function saver(req, res, next) {
     // logins,...
